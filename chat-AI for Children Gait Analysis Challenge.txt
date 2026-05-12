@@ -1,0 +1,5287 @@
+### USER
+Dưới góc độ bạn là chuyên gia về Artificial Intellicent, Machine Learning, Deep Learning, Python,... và những chủ đề liên quan đến dự án hàng đầu thế giới. Dự án "[CVPR 2026] The First AI for Children Challenge
+CVPR 2026 Children Gait Visual Analysis Competition in CV4CHL Workshop" - Mô tả bài toán Overview
+The first AI Children Challenge aims to advance real-world applications of computer vision and AI in child healthcare, child education, and pediatrics. The 2026 CV4CHL edition featured the first track in this domain: Children Gait Visual Analysis. The main goal of Children Gait Visual Analysis is the fine-grained analysis of children's gait behaviors from keypoint sequences.
+
+The Challenge has two tracks. In Track 1, you’ll use the provided Track 1 training set under our proposed Children Gait Pose Sequence (CGPS) Dataset to develop models that are capable of conducting fine-grained kinematic analysis to accurately predict EVGS metrics directly. In Track 2, you'll use the provided Track 2 training set under the same dataset to develop models to correctly classify the gait patterns of Bilateral Spastic Cerebral Palsy. The predicted results will be uploaded for evaluation, and the scores of the two tracks each account for 50% to determine the final score.
+
+Start
+
+a month ago
+Close
+
+15 days to go
+Description
+The Challenge has two tracks. In Track 1, you’ll use the provided Track 1 training set under our proposed Children Gait Pose Sequence (CGPS) Dataset to develop models that are capable of conducting fine-grained kinematic analysis to accurately predict EVGS metrics directly. In Track 2, you'll use the provided Track 2 training set under the same dataset to develop models to correctly classify the gait patterns of Bilateral Spastic Cerebral Palsy. The predicted results will be uploaded for evaluation, and the scores of the two tracks each account for 50% to determine the final score.
+
+EVGS Introduction
+The Edinburgh Visual Gait Score (EVGS) is a clinical tool developed to visually assess gait deviations in ambulatory children using coronal and sagittal video recordings. It evaluates 17 observational scoring items for each limb that are graded on a three-point ordinal scale (0: normal, 1: moderate deviation, 2: severe deviation). Detailed scoring criteria can be found in this guide.
+
+To simplify the problem, address the imbalance in labels, and establish a robust computational benchmark, we performed binary processing on the evaluation results, merging scores 1 and 2 into a single category.
+
+Gait Patterns in Bilateral Spastic Cerebral Palsy
+
+
+As shown in the figure, there are 4 common gait patterns in Bilateral Spastic Cerebral Palsy: True Equinus, Jump Gait, Apparent Equinus, and Crouch Gait. The other gait patterns that are relatively normal are referred to as WNL. Detailed information on the gait patterns can be found in this website.
+
+Track 1 - EVGS Scoring
+The Edinburgh Visual Gait Score (EVGS) is a kind of observational scale that is critical for diagnosing neurodevelopmental disorders such as Cerebral Palsy (CP). Therefore, designing dedicated pediatric modeling techniques and developing a model capable of automatic scoring to provide pediatricians with a reference is essential for clinical diagnosis. In this track, participants are tasked with developing algorithms capable of conducting fine-grained kinematic analysis to accurately predict EVGS metrics directly from provided children's 2D keypoint sequences.
+
+Specifically, the participants will be provided with the training set for track 1 of our proposed CGPS dataset. For each patient, we provide EVGS scores for each limb(left/right) of the patient and a set of multi-view annotations, including keypoint sequence, bounding box, and the meta information of the original video per frame. The goal is to use the dataset to train a model to predict the EVGS scores for each limb of the patient from the evaluation set. Your final score will be based on the accuracy of each scoring item and the RMSE for the total score of the patient.
+
+Track 2 - Classification of Gait Patterns in Bilateral Spastic Cerebral Palsy
+Although Gait classification systems for children with bilateral lower limb spasticity have been developed, there are limitations to their clinical relevance and applicability in orthotic prescription. Studies have shown low levels of validity and reliability for these classification systems, emphasizing the need for comprehensive approaches that address the range and magnitude of gait deviations in children with bilateral CP. As a track running parallel to Track 1, this track focuses on dealing with this issue, which challenges teams to classify specific subtypes of bilateral cerebral palsy by recognizing subtle, pathological variations in children's gait behaviors.
+
+Specifically, the participants will be provided with the training set for track 2 of our proposed CGPS dataset. We ensure that all the patients in this track are suffering from Bilateral Spastic Cerebral Palsy. For each patient, we provide the gait patterns for each limb(left/right) and a set of multi-view annotations with the same contents as Track 1. The goal is to use the dataset to train a model to predict the gait pattern for each limb of the patient from the evaluation set. Your final score will be based on the accuracy of each limb and the Macro F1 Score of the overall prediction.
+
+Evaluation
+Track 1 - Track 1 - EVGS Scoring
+In this track, we use Accuracy and Root Mean Square Error (RMSE) to comprehensively evaluate the predictive ability of the fine-grained kinematic analysis and EVGS scoring of the model. Specifically, for each patient in the evaluation set, we will calculate the overall accuracy:
+
+Acc1=
+1
+N
+ 
+N
+∑
+i=1
+ I[yi== 
+ˆ
+y
+ i]
+
+where N is the total number of scoring items across all patients,  
+ˆ
+y
+ i is the predicted EVGS score, and yi is the clinical ground truth.
+
+Besides, the error between the ground truth and the predicted values is calculated using the RMSE:
+
+RMSE=
+√
+1
+M
+ 
+M
+∑
+i=1
+ (pi−gi)2
+
+where M is the total number of samples in the evaluation set, pi= 
+∑
+j
+  
+ˆ
+y
+ j is the predicted total EVGS score, and gi= 
+∑
+j
+ yjis the clinical ground truth.
+
+To ensure that a smaller gap translates to a higher final score, the evaluation score for Track 1, denoted as S1, uses a normalized RMSE (NRMSE) to scale the results relative to all participating teams:
+
+NRMSE=
+RMSE
+34
+ 
+
+S1=
+Acc+1−NRMSE
+2
+ 
+
+This scoring mechanism effectively rewards models that most closely align with the precise ground-truth measurements.
+
+Track 2 - Classification of Gait Patterns in Bilateral Spastic Cerebral Palsy
+To rank participant submissions, we use Accuracy and F1 Score, designed to balance recall and precision. This ensures that models do not over-predict specific types (leading to low precision) nor under-predict specific types (resulting in low recall). There are several variations of the F1 score (macro-averaged per sample, macro-averaged per class, and micro-averaged). For this challenge, we use the macro-averaged F1 score per sample, which is particularly suited for multi-label classification problems. This approach ensures a fair evaluation of each image independently, rather than being influenced by class distribution.
+
+F1k=
+2PkRk
+Pk+Rk
+ 
+
+where for each gait pattern k, consider it as the positive class, and the other four categories as the negative classes.
+
+F1macro=
+1
+5
+ 
+5
+∑
+k=1
+ F1k
+
+Besides, we have:
+
+Acc2=
+1
+M
+ 
+5
+∑
+k=1
+ TPk
+
+where M is the total number of samples in the evaluation set.
+
+Denote the evaluation score of Track 2 as S2, we have:
+
+S2=
+Acc2+F1macro
+2
+ 
+
+Final Score
+The rankings are based on the total scores from both tracks, and the scores of the two tracks each account for 50% to determine the final score:
+
+S=
+S1+S2
+2
+ 
+
+Submissions are evaluated on the evaluation settings we mentioned before.
+
+Submission File
+All you need to do is submit a CSV file, which contains both track results. The file should contain a header and have the following format:
+
+ID,L1,L2,L3,L4,L5,L6,L7,L8,L9,L10,L11,L12,L13,L14,L15,L16,L17,R1,R2,R3,R4,R5,R6,R7,R8,R9,R10,R11,R12,R13,R14,R15,R16,R17,Total,Left_gait_subtype,Right_gait_subtype
+track1-4 ...
+...
+track2-4 ...
+...
+where you should use track1- and track2- as prefixes, and then add the patient ID to distinguish between Track 1 and 2. For cells that do not belong to the current track or the track you do not participate in, please enter -1. Please list track 1 first, followed by track 2, and sort the IDs in ascending order in the first column.
+
+For Track 1, the cell should be filled with 0/1, indicating negative or positive. For Track 2, the cell should be filled with "type1", "type2", "type3", "type4", "WNL" (string, w/o "").
+
+For Track 1, the test set is [4, 5, 18, 26, 28, 40, 42, 43, 47, 48, 53, 54, 72, 78, 83, 85]. For Track 2, the test set is [4, 6, 7, 13, 26, 35, 39, 42, 50].
+
+Technical Report & Codes
+Participants are also required to write a four-page report outlining the technical approach and results. The report should use the official LaTeX template for CVPR2026. Besides, to ensure fairness and reproducibility, participants should make their code repositories publicly available.
+
+After the Challenge ends, we will re-evaluate the submissions locally using the released code and model from teams. Any team that has not made its code public, or any team whose results differ significantly from the local evaluation, will be deemed non-compliant and will forfeit its eligibility for awards.
+
+Awards & Presentation
+1st Place: NVIDIA RTX 5080 GPU or Latest AR Glasses
+2nd/3rd Place: $100 Amazon Gift Card
+We will base our decision on the competition results, the quality of the report, and whether the team attended the conference to give the presentation quota.
+
+Timeline
+March 23, 2026: Competition launch & registration opens
+
+April 23, 2026: Challenge Deadline of CVPR 2026 CV4CHL (The Leaderboard will be continuously recorded)
+
+May 15, 2026: Challenge Report Submission Deadline
+
+CVPR Workshop: Award ceremony & presentations by top teams
+
+All deadlines are at 11:59 PM AoE of the corresponding day unless otherwise stated.
+
+The competition organizers reserve the right to update the contest timeline if they deem it necessary.
+
+Judges
+ Boyi Li
+UIUC	 Xu Cao
+PediaMed AI
+ Meihuan Huang
+Shenzhen Children's Hospital	 Guojun Yun
+Shenzhen Children's Hospital
+Contact
+If you have any questions about the Challenge, please post on the discussion section or send an email to boyil2@illinois.edu
+
+BibTex
+Please cite both this section and the next section in your technical report when submitting to our workshop. Also, if you find our Challenge helpful in your research, please consider citing both this section and the next section:
+
+@inproceedings{li2026challenge,
+  title={The 1st AI Children Challenge},
+  author = {Li, Boyi and Shen, Yifan and Yang, Houze and Cao, Xu, and Yun, Guojun and Gao, Li and Chen, Turong and Xu, Long and Cao, Jianguo and Huang, Meihuan},
+  booktitle={2026 IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops (CVPRW)},
+  year={2026}
+}
+Citation
+Li, Boyi, Shen, Yifan, Yang, Houze, Cao, Xu, Yun, Guojun, Gao, Li, Chen, Turong, XuDataset Description
+Please note: Only the metadata of the training set for both tracks are hosted directly on Kaggle. The full dataset must be downloaded via the external link.
+
+Introduction
+We introduce the Children Gait Pose Sequence (CGPS) dataset (a subset of Children Gait Video (CGV) Dataset) to support this Challenge. The dataset contains 2D keypoints annotation per frame across a total number of 339,236 frames (1,185 videos) of size 1920x1080 (2K) with 17 EVGS sub-item annotations per limb and the patient-level diagnosis results of CP motor types (Unilateral or Bilateral) and corresponding subtypes. The videos were recorded at Shenzhen Children's Hospital using smartphone cameras and action cameras, positioned simultaneously to capture sagittal and coronal views. Raw video is not provided due to the privacy protection of the child patient. In total, 110 patients participated in the data collection. In some cases, multiple recordings per view were available. The dataset provides detailed annotations per frame and per video, including the 2D human keypoints (detected with Sapiens-2B and manually adjusted by human annotators), bounding boxes (detected with SAM 3 and manually adjusted by human annotators), basic infomation of the original video, the EVGS sub-items and CP motor types and subtypes (annotated by Dr. Meihuan Huang in the organization team and reviewed by Dr. Jianguo Cao, a pediatrician with 40 years of clinical experience), the diagnosis results tracing from the patient's follow-up record.
+
+To capture the dataset, a primary camera is positioned at the terminus of an 8-meter walkway to record the coronal (frontal and posterior) view. A secondary camera is oriented orthogonally, facing the center of the walkway, to capture the sagittal (lateral) view. This lateral camera is positioned at a sufficient distance to ensure its field of view encompasses the middle four meters of the trial space. This specific distance is calibrated to guarantee the capture of 2-3 complete gait cycles (strides) per subject.
+
+Layout
+For each frame, we have a JSON file like this:
+
+{
+  "instance_info": [
+    {
+      "keypoints": [
+        [
+          1337.9793008241354,
+          393.9475620910023
+        ],
+        ...
+      ],
+      "keypoint_scores": [
+        0.7141298651695251,
+        ...
+      ],
+      "obj_id": 0,
+      "gt_bbox_xywh_px": [
+        1223,
+        287,
+        346,
+        792
+      ]
+    }
+  ],
+  "video_info": {
+    "video_name": "****.mp4",
+    "width": 1920,
+    "height": 1080,
+    "fps": 59,
+    "total_frames": 391
+  },
+  "frame_index": 0
+}
+where keypoints contains 133 pairs of keypoints following the COCO-WholeBody keypoint format, keypoint_scores indicates the confidence score for each pair of keypoints, gt_bbox_xywh_px is the bounding box coordinates of the object, and video_info is the basic information of the original video.
+
+We provide four views of videos for each patient. Left, right, forward, and right in the name of videos indicate the patient walks: from right to left, from left to right, away from the camera with their back to it, and toward the camera facing it. We encourage you to use these multi-view videos to solve problems.
+
+Visualization
+TheDataset Description
+Please note: Only the metadata of the training set for both tracks are hosted directly on Kaggle. The full dataset must be downloaded via the external link.
+
+Introduction
+We introduce the Children Gait Pose Sequence (CGPS) dataset (a subset of Children Gait Video (CGV) Dataset) to support this Challenge. The dataset contains 2D keypoints annotation per frame across a total number of 339,236 frames (1,185 videos) of size 1920x1080 (2K) with 17 EVGS sub-item annotations per limb and the patient-level diagnosis results of CP motor types (Unilateral or Bilateral) and corresponding subtypes. The videos were recorded at Shenzhen Children's Hospital using smartphone cameras and action cameras, positioned simultaneously to capture sagittal and coronal views. Raw video is not provided due to the privacy protection of the child patient. In total, 110 patients participated in the data collection. In some cases, multiple recordings per view were available. The dataset provides detailed annotations per frame and per video, including the 2D human keypoints (detected with Sapiens-2B and manually adjusted by human annotators), bounding boxes (detected with SAM 3 and manually adjusted by human annotators), basic infomation of the original video, the EVGS sub-items and CP motor types and subtypes (annotated by Dr. Meihuan Huang in the organization team and reviewed by Dr. Jianguo Cao, a pediatrician with 40 years of clinical experience), the diagnosis results tracing from the patient's follow-up record.
+
+To capture the dataset, a primary camera is positioned at the terminus of an 8-meter walkway to record the coronal (frontal and posterior) view. A secondary camera is oriented orthogonally, facing the center of the walkway, to capture the sagittal (lateral) view. This lateral camera is positioned at a sufficient distance to ensure its field of view encompasses the middle four meters of the trial space. This specific distance is calibrated to guarantee the capture of 2-3 complete gait cycles (strides) per subject.
+
+Layout
+For each frame, we have a JSON file like this:
+
+{
+  "instance_info": [
+    {
+      "keypoints": [
+        [
+          1337.9793008241354,
+          393.9475620910023
+        ],
+        ...
+      ],
+      "keypoint_scores": [
+        0.7141298651695251,
+        ...
+      ],
+      "obj_id": 0,
+      "gt_bbox_xywh_px": [
+        1223,
+        287,
+        346,
+        792
+      ]
+    }
+  ],
+  "video_info": {
+    "video_name": "****.mp4",
+    "width": 1920,
+    "height": 1080,
+    "fps": 59,
+    "total_frames": 391
+  },
+  "frame_index": 0
+}
+where keypoints contains 133 pairs of keypoints following the COCO-WholeBody keypoint format, keypoint_scores indicates the confidence score for each pair of keypoints, gt_bbox_xywh_px is the bounding box coordinates of the object, and video_info is the basic information of the original video.
+
+We provide four views of videos for each patient. Left, right, forward, and right in the name of videos indicate the patient walks: from right to left, from left to right, away from the camera with their back to it, and toward the camera facing it. We encourage you to use these multi-view videos to solve problems.
+
+Visualization
+The[
+  {
+    "patient_id": 1,
+    "left": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 8
+    },
+    "right": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 6
+    }
+  },
+  {
+    "patient_id": 2,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 1,
+      "11": 1,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 1,
+      "6": 1,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 8
+    }
+  },
+  {
+    "patient_id": 3,
+    "left": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 4
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 1,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 1,
+      "17": 1,
+      "Total": 10
+    }
+  },
+  {
+    "patient_id": 6,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 1,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 7
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 5
+    }
+  },
+  {
+    "patient_id": 7,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 1,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 1,
+      "17": 1,
+      "Total": 10
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 1,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 1,
+      "Total": 10
+    }
+  },
+  {
+    "patient_id": 8,
+    "left": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 1,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 1,
+      "8": 0,
+      "9": 0,
+      "10": 1,
+      "11": 1,
+      "12": 0,
+      "13": 1,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 8
+    }
+  },
+  {
+    "patient_id": 9,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 1,
+      "12": 1,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 1,
+      "17": 0,
+      "Total": 7
+    },
+    "right": {
+      "1": 1,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 1,
+      "17": 0,
+      "Total": 4
+    }
+  },
+  {
+    "patient_id": 10,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 6
+    },
+    "right": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    }
+  },
+  {
+    "patient_id": 11,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 1,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 9
+    },
+    "right": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 1,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 6
+    }
+  },
+  {
+    "patient_id": 12,
+    "left": {
+      "1": 1,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 1,
+      "12": 1,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 9
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 1,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 1,
+      "17": 1,
+      "Total": 9
+    }
+  },
+  {
+    "patient_id": 13,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 2
+    },
+    "right": {
+      "1": 1,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 2
+    }
+  },
+  {
+    "patient_id": 14,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 4
+    },
+    "right": {
+      "1": 1,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 0,
+      "17": 1,
+      "Total": 6
+    }
+  },
+  {
+    "patient_id": 15,
+    "left": {
+      "1": 1,
+      "2": 0,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 1,
+      "12": 1,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 9
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 1,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 1,
+      "Total": 5
+    }
+  },
+  {
+    "patient_id": 16,
+    "left": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 1,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 4
+    },
+    "right": {
+      "1": 1,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 1,
+      "10": 1,
+      "11": 1,
+      "12": 0,
+      "13": 1,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 6
+    }
+  },
+  {
+    "patient_id": 17,
+    "left": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 1,
+      "11": 1,
+      "12": 0,
+      "13": 1,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 4
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 1,
+      "12": 0,
+      "13": 1,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 9
+    }
+  },
+  {
+    "patient_id": 19,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 1
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 1,
+      "Total": 10
+    }
+  },
+  {
+    "patient_id": 20,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 1,
+      "Total": 3
+    },
+    "right": {
+      "1": 0,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 1,
+      "14": 1,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 8
+    }
+  },
+  {
+    "patient_id": 21,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 1,
+      "8": 0,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 1,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 9
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 1,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 12
+    }
+  },
+  {
+    "patient_id": 22,
+    "left": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 5
+    },
+    "right": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 5
+    }
+  },
+  {
+    "patient_id": 23,
+    "left": {
+      "1": 0,
+      "2": 1,
+      "3": 1,
+      "4": 0,
+      "5": 0,
+      "6": 1,
+      "7": 1,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 10
+    },
+    "right": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 1,
+      "7": 1,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 9
+    }
+  },
+  {
+    "patient_id": 24,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 5
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 8
+    }
+  },
+  {
+    "patient_id": 25,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 1,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 6
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 4
+    }
+  },
+  {
+    "patient_id": 27,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 10
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 6
+    }
+  },
+  {
+    "patient_id": 29,
+    "left": {
+      "1": 1,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 1,
+      "12": 1,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 7
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 1,
+      "8": 0,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 9
+    }
+  },
+  {
+    "patient_id": 30,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 1,
+      "12": 1,
+      "13": 1,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 11
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 1,
+      "12": 1,
+      "13": 1,
+      "14": 1,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 12
+    }
+  },
+  {
+    "patient_id": 31,
+    "left": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 2
+    },
+    "right": {
+      "1": 1,
+      "2": 0,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 8
+    }
+  },
+  {
+    "patient_id": 32,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 1,
+      "7": 1,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 13
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 10
+    }
+  },
+  {
+    "patient_id": 33,
+    "left": {
+      "1": 1,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 1,
+      "17": 1,
+      "Total": 8
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 1,
+      "17": 0,
+      "Total": 7
+    }
+  },
+  {
+    "patient_id": 34,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 1,
+      "12": 1,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 1,
+      "17": 1,
+      "Total": 12
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 1,
+      "17": 1,
+      "Total": 7
+    }
+  },
+  {
+    "patient_id": 35,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 11
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 1,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 1,
+      "Total": 11
+    }
+  },
+  {
+    "patient_id": 36,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 6
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 6
+    }
+  },
+  {
+    "patient_id": 37,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 8
+    }
+  },
+  {
+    "patient_id": 38,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 0,
+      "9": 1,
+      "10": 1,
+      "11": 1,
+      "12": 1,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 11
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 1
+    }
+  },
+  {
+    "patient_id": 39,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 5
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 5
+    }
+  },
+  {
+    "patient_id": 41,
+    "left": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 1,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 1,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 4
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 1,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 1,
+      "12": 1,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 8
+    }
+  },
+  {
+    "patient_id": 44,
+    "left": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 1,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 1,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 7
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 1,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 1,
+      "14": 1,
+      "15": 1,
+      "16": 1,
+      "17": 1,
+      "Total": 14
+    }
+  },
+  {
+    "patient_id": 45,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 4
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 1,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 6
+    }
+  },
+  {
+    "patient_id": 46,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 1,
+      "12": 1,
+      "13": 1,
+      "14": 0,
+      "15": 0,
+      "16": 1,
+      "17": 0,
+      "Total": 10
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 1,
+      "17": 0,
+      "Total": 7
+    }
+  },
+  {
+    "patient_id": 49,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 6
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 1,
+      "17": 1,
+      "Total": 7
+    }
+  },
+  {
+    "patient_id": 50,
+    "left": {
+      "1": 0,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 1,
+      "7": 1,
+      "8": 1,
+      "9": 1,
+      "10": 0,
+      "11": 0,
+      "12": 1,
+      "13": 1,
+      "14": 1,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 13
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 1,
+      "4": 1,
+      "5": 0,
+      "6": 1,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 1,
+      "12": 1,
+      "13": 1,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 11
+    }
+  },
+  {
+    "patient_id": 51,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    }
+  },
+  {
+    "patient_id": 52,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 1,
+      "12": 1,
+      "13": 1,
+      "14": 1,
+      "15": 1,
+      "16": 1,
+      "17": 1,
+      "Total": 13
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 1,
+      "7": 0,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 1,
+      "12": 1,
+      "13": 1,
+      "14": 1,
+      "15": 1,
+      "16": 1,
+      "17": 1,
+      "Total": 14
+    }
+  },
+  {
+    "patient_id": 55,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 1,
+      "12": 0,
+      "13": 1,
+      "14": 0,
+      "15": 0,
+      "16": 1,
+      "17": 0,
+      "Total": 8
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 1,
+      "12": 0,
+      "13": 1,
+      "14": 0,
+      "15": 0,
+      "16": 1,
+      "17": 0,
+      "Total": 8
+    }
+  },
+  {
+    "patient_id": 56,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 1,
+      "14": 0,
+      "15": 0,
+      "16": 1,
+      "17": 1,
+      "Total": 10
+    },
+    "right": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 1,
+      "14": 1,
+      "15": 0,
+      "16": 1,
+      "17": 1,
+      "Total": 7
+    }
+  },
+  {
+    "patient_id": 57,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 1,
+      "Total": 12
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 9
+    }
+  },
+  {
+    "patient_id": 58,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 1,
+      "12": 0,
+      "13": 1,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 7
+    },
+    "right": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 1,
+      "11": 1,
+      "12": 0,
+      "13": 1,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 4
+    }
+  },
+  {
+    "patient_id": 59,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 1,
+      "8": 0,
+      "9": 1,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 1,
+      "Total": 8
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 1,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 1,
+      "14": 0,
+      "15": 0,
+      "16": 1,
+      "17": 1,
+      "Total": 10
+    }
+  },
+  {
+    "patient_id": 60,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 5
+    },
+    "right": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 4
+    }
+  },
+  {
+    "patient_id": 61,
+    "left": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 8
+    },
+    "right": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 9
+    }
+  },
+  {
+    "patient_id": 62,
+    "left": {
+      "1": 1,
+      "2": 0,
+      "3": 1,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 5
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 2
+    }
+  },
+  {
+    "patient_id": 63,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 1,
+      "14": 1,
+      "15": 1,
+      "16": 1,
+      "17": 1,
+      "Total": 11
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 1,
+      "14": 1,
+      "15": 1,
+      "16": 1,
+      "17": 1,
+      "Total": 11
+    }
+  },
+  {
+    "patient_id": 64,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 1,
+      "7": 1,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 13
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 1,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 10
+    }
+  },
+  {
+    "patient_id": 65,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 7
+    },
+    "right": {
+      "1": 1,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 5
+    }
+  },
+  {
+    "patient_id": 66,
+    "left": {
+      "1": 1,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 2
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 8
+    }
+  },
+  {
+    "patient_id": 67,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 8
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 1,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 6
+    }
+  },
+  {
+    "patient_id": 68,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 3
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 3
+    }
+  },
+  {
+    "patient_id": 69,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 1,
+      "Total": 4
+    }
+  },
+  {
+    "patient_id": 70,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    }
+  },
+  {
+    "patient_id": 71,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 2
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 2
+    }
+  },
+  {
+    "patient_id": 73,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 1,
+      "Total": 6
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    }
+  },
+  {
+    "patient_id": 74,
+    "left": {
+      "1": 1,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 1,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 7
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    }
+  },
+  {
+    "patient_id": 75,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 2
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 2
+    }
+  },
+  {
+    "patient_id": 76,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 1,
+      "Total": 9
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 0,
+      "6": 1,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 10
+    }
+  },
+  {
+    "patient_id": 77,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 4
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 6
+    }
+  },
+  {
+    "patient_id": 79,
+    "left": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 5
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 4
+    }
+  },
+  {
+    "patient_id": 80,
+    "left": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 1,
+      "12": 1,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 5
+    },
+    "right": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 1,
+      "12": 1,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 1,
+      "Total": 7
+    }
+  },
+  {
+    "patient_id": 81,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    }
+  },
+  {
+    "patient_id": 82,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 2
+    },
+    "right": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 5
+    }
+  },
+  {
+    "patient_id": 84,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 4
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 4
+    }
+  },
+  {
+    "patient_id": 86,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 2
+    }
+  },
+  {
+    "patient_id": 87,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    }
+  },
+  {
+    "patient_id": 88,
+    "left": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 1,
+      "10": 0,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 8
+    },
+    "right": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 1,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 1,
+      "17": 1,
+      "Total": 10
+    }
+  },
+  {
+    "patient_id": 89,
+    "left": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 6
+    },
+    "right": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 5
+    }
+  },
+  {
+    "patient_id": 90,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 2
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 2
+    }
+  },
+  {
+    "patient_id": 91,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 1,
+      "7": 1,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 8
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 1,
+      "6": 1,
+      "7": 1,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 9
+    }
+  },
+  {
+    "patient_id": 92,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 2
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 1
+    }
+  },
+  {
+    "patient_id": 93,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 2
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 1
+    }
+  },
+  {
+    "patient_id": 94,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 6
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 1,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 6
+    }
+  },
+  {
+    "patient_id": 95,
+    "left": {
+      "1": 1,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 3
+    },
+    "right": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 1,
+      "12": 0,
+      "13": 1,
+      "14": 1,
+      "15": 1,
+      "16": 1,
+      "17": 1,
+      "Total": 10
+    }
+  },
+  {
+    "patient_id": 96,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 1,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 7
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 1,
+      "4": 0,
+      "5": 1,
+      "6": 1,
+      "7": 1,
+      "8": 1,
+      "9": 1,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 8
+    }
+  },
+  {
+    "patient_id": 97,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 2
+    },
+    "right": {
+      "1": 1,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 4
+    }
+  },
+  {
+    "patient_id": 98,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    }
+  },
+  {
+    "patient_id": 99,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 2
+    }
+  },
+  {
+    "patient_id": 100,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 3
+    }
+  },
+  {
+    "patient_id": 101,
+    "left": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 1
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 0
+    }
+  },
+  {
+    "patient_id": 102,
+    "left": {
+      "1": 1,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 4
+    },
+    "right": {
+      "1": 1,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 4
+    }
+  },
+  {
+    "patient_id": 103,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 1
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 1
+    }
+  },
+  {
+    "patient_id": 104,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 3
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+     [
+  {
+    "patient_id": 1,
+    "left": {
+      "gait_subtype": "type3"
+    },
+    "right": {
+      "gait_subtype": "type3"
+    }
+  },
+  {
+    "patient_id": 5,
+    "left": {
+      "gait_subtype": "type3"
+    },
+    "right": {
+      "gait_subtype": "type3"
+    }
+  },
+  {
+    "patient_id": 12,
+    "left": {
+      "gait_subtype": "type3"
+    },
+    "right": {
+      "gait_subtype": "type3"
+    }
+  },
+  {
+    "patient_id": 18,
+    "left": {
+      "gait_subtype": "type2"
+    },
+    "right": {
+      "gait_subtype": "type2"
+    }
+  },
+  {
+    "patient_id": 21,
+    "left": {
+      "gait_subtype": "type2"
+    },
+    "right": {
+      "gait_subtype": "type2"
+    }
+  },
+  {
+    "patient_id": 22,
+    "left": {
+      "gait_subtype": "WNL"
+    },
+    "right": {
+      "gait_subtype": "WNL"
+    }
+  },
+  {
+    "patient_id": 23,
+    "left": {
+      "gait_subtype": "type1"
+    },
+    "right": {
+      "gait_subtype": "type1"
+    }
+  },
+  {
+    "patient_id": 24,
+    "left": {
+      "gait_subtype": "type1"
+    },
+    "right": {
+      "gait_subtype": "type1"
+    }
+  },
+  {
+    "patient_id": 27,
+    "left": {
+      "gait_subtype": "type1"
+    },
+    "right": {
+      "gait_subtype": "type1"
+    }
+  },
+  {
+    "patient_id": 29,
+    "left": {
+      "gait_subtype": "type2"
+    },
+    "right": {
+      "gait_subtype": "type2"
+    }
+  },
+  {
+    "patient_id": 30,
+    "left": {
+      "gait_subtype": "type3"
+    },
+    "right": {
+      "gait_subtype": "type3"
+    }
+  },
+  {
+    "patient_id": 32,
+    "left": {
+      "gait_subtype": "type2"
+    },
+    "right": {
+      "gait_subtype": "type3"
+    }
+  },
+  {
+    "patient_id": 33,
+    "left": {
+      "gait_subtype": "type3"
+    },
+    "right": {
+      "gait_subtype": "type3"
+    }
+  },
+  {
+    "patient_id": 36,
+    "left": {
+      "gait_subtype": "type1"
+    },
+    "right": {
+      "gait_subtype": "type1"
+    }
+  },
+  {
+    "patient_id": 47,
+    "left": {
+      "gait_subtype": "type1"
+    },
+    "right": {
+      "gait_subtype": "type1"
+    }
+  },
+  {
+    "patient_id": 48,
+    "left": {
+      "gait_subtype": "type1"
+    },
+    "right": {
+      "gait_subtype": "type3"
+    }
+  },
+  {
+    "patient_id": 52,
+    "left": {
+      "gait_subtype": "type4"
+    },
+    "right": {
+      "gait_subtype": "type4"
+    }
+  },
+  {
+    "patient_id": 53,
+    "left": {
+      "gait_subtype": "type3"
+    },
+    "right": {
+      "gait_subtype": "type3"
+    }
+  },
+  {
+    "patient_id": 55,
+    "left": {
+      "gait_subtype": "type2"
+    },
+    "right": {
+      "gait_subtype": "type2"
+    }
+  },
+  {
+    "patient_id": 57,
+    "left": {
+      "gait_subtype": "type2"
+    },
+    "right": {
+      "gait_subtype": "type2"
+    }
+  },
+  {
+    "patient_id": 63,
+    "left": {
+      "gait_subtype": "type2"
+    },
+    "right": {
+      "gait_subtype": "type2"
+    }
+  },
+  {
+    "patient_id": 64,
+    "left": {
+      "gait_subtype": "type2"
+    },
+    "right": {
+      "gait_subtype": "type2"
+    }
+  }
+] "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 4
+    }
+  },
+  {
+    "patient_id": 105,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 0,
+      "9": 1,
+      "10": 1,
+      "11": 1,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 1,
+      "17": 0,
+      "Total": 11
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 1,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 0,
+      "17": 1,
+      "Total": 5
+    }
+  },
+  {
+    "patient_id": 106,
+    "left": {
+      "1": 0,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 1,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 4
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 1
+    }
+  },
+  {
+    "patient_id": 107,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 3
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 1,
+      "17": 0,
+      "Total": 3
+    }
+  },
+  {
+    "patient_id": 108,
+    "left": {
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 1,
+      "8": 1,
+      "9": 1,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 7
+    },
+    "right": {
+      "1": 0,
+      "2": 1,
+      "3": 1,
+      "4": 1,
+      "5": 0,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 1,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 5
+    }
+  },
+  {
+    "patient_id": 109,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 4
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 0,
+      "7": 0,
+      "8": 1,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 1,
+      "16": 0,
+      "17": 0,
+      "Total": 4
+    }
+  },
+  {
+    "patient_id": 110,
+    "left": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 1,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 0,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 1
+    },
+    "right": {
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0,
+      "7": 1,
+      "8": 0,
+      "9": 0,
+      "10": 0,
+      "11": 0,
+      "12": 0,
+      "13": 0,
+      "14": 1,
+      "15": 0,
+      "16": 0,
+      "17": 0,
+      "Total": 2
+    }
+  }
+] visualization script can be found in this link. visualization script can be found in this link., Long, Cao, Jianguo, and Huang, Meihuan. [CVPR 2026] The First AI for Children Challenge. https://kaggle.com/competitions/cvpr-2026-the-first-ai-children-challenge, 2026. Kaggle."" - Mô tả dữ liệu "". Bạn hãy dùng bộ não chuyên gia đó đi từ cơ bản đến nâng cao: từ phân tích bài toán từ cơ bản đến nâng cao bài toán, các kiến thức, thuật toán, dữ liệu; Pipline gợi ý xoay quanh bài toán step-by-step; và đưa ra những cách mà các chuyên gia granmaster-kagle hàng đầu thế giới. Với mục tiêu của tôi trong 3 tháng vừa học tốt nhất các chủ đề xoay quanh bài toán, và đạt kết quả cao nhất có thể rank prive
+
+### ASSISTANT
+# 🎯 Expert Guide: CVPR 2026 Children Gait Visual Analysis Competition
+
+> *Dành cho bạn - sinh viên muốn học từ cơ bản đến nâng cao, với mục tiêu đạt rank cao trong 3 tháng*
+
+---
+
+## 📊 PHẦN 1: PHÂN TÍCH BÀI TOÁN TỪ CƠ BẢN ĐẾN NÂNG CAO
+
+### 🔹 Level 1: Hiểu bài toán ở mức cơ bản
+
+```
+🎯 Mục tiêu chính:
+├── Track 1: Dự đoán EVGS Score (0/1) cho 17 items × 2 chi = 34 binary labels
+├── Track 2: Phân loại 5 kiểu dáng đi (type1-4 + WNL) cho từng chi
+└── Input: Sequence keypoints 2D (133 joints theo COCO-WholeBody)
+```
+
+**Dữ liệu đầu vào:**
+- 339,236 frames từ 1,185 videos, độ phân giải 2K 
+- 110 bệnh nhân, mỗi người có 4 góc quay (trái, phải, trước, sau)
+- Keypoints: 133 cặp tọa độ (x,y) + confidence score
+- Meta bbox, fps, video info
+
+### 🔹 Level 2: Hiểu sâu về domain knowledge
+
+**Edinburgh Visual Gait Score (EVGS):**
+- Công cụ lâm sàng đánh giá 17 items quan sát dáng đi 
+- Mỗi item: 0 (bình thường), 1 (lệch vừa), 2 (lệch nặng) → **Binary: 0 vs {1,2}**
+- Đánh giá trên 2 mặt phẳng: sagittal (nghiêng) và coronal (trước-sau)
+
+**5 kiểu dáng đi trong Bilateral Spastic Cerebral Palsy** :
+```
+1. True Equinus: Đi bằng mũi chân, gối duỗi
+2. Jump Gait: Gối + hông + cổ chân đều gập
+3. Apparent Equinus: Trông như đi mũi chân nhưng do gối gập quá mức
+4. Crouch Gait: Gối gập quá mức trong tất cả pha dáng đi
+5. WNL (Within Normal Limits): Dáng đi bình thường
+```
+
+### 🔹 Level 3: Thách thức kỹ thuật nâng cao
+
+| Thách thức | Giải pháp tiềm năng |
+|-----------|-------------------|
+| **Sequence dài, biến động** | Temporal modeling (Transformer, TCN, LSTM) |
+| **Multi-view fusion** | Early/late fusion, attention across views |
+| **Class imbalance** | Focal loss, oversampling, ensemble |
+| **Small dataset (110 patients)** | Transfer learning, augmentation, cross-validation |
+| **Fine-grained kinematic features** | Geometric features + learned features |
+| **Evaluation metric phức tạp** | Optimize trực tiếp cho Acc + NRMSE / F1-macro |
+
+---
+
+## 🧠 PHẦN 2: KIẾN THỨC & THUẬT TOÁN CẦN NẮM
+
+### 🔸 Nền tảng bắt buộc (Tuần 1-2)
+
+```python
+# 1. Xử lý sequence keypoints
+import numpy as np
+import torch
+from torch.utils.data import Dataset, DataLoader
+
+class GaitSequenceDataset(Dataset):
+    def __init__(self, json_path, transform=None):
+        # Load keypoints sequence: [T, 133, 2]
+        # Normalize coordinates, handle missing keypoints
+        pass
+    
+    def __getitem__(self, idx):
+        # Return: sequence, labels, metadata
+        pass
+```
+
+**Kiến thức cần học:**
+- ✅ Python cơ bản + NumPy/Pandas
+- ✅ PyTorch fundamentals: Tensor, Autograd, Module
+- ✅ Data loading & augmentation cho sequence data
+- ✅ Evaluation metrics: Accuracy, RMSE, F1-macro
+
+### 🔸 Model Architecture (Tuần 3-5)
+
+#### 🎯 Track 1: EVGS Scoring (Multi-label Binary Classification)
+
+```
+Kiến trúc đề xuất:
+┌─────────────────────────────────┐
+│ Input: [T, 133, 2] keypoints    │
+├─────────────────────────────────┤
+│ 1. Feature Extraction           │
+│    ├─ MLP per joint → [T, 133, D] │
+│    ├─ Hoặc: Graph Conv trên skeleton │
+│    └─ Hoặc: Pretrained pose encoder │
+├─────────────────────────────────┤
+│ 2. Temporal Modeling            │
+│    ├─ Option A: Transformer Encoder │
+│    ├─ Option B: TCN (Temporal Conv Net)│
+│    └─ Option C: BiLSTM + Attention │
+├─────────────────────────────────┤
+│ 3. Multi-view Fusion           │
+│    ├─ Concatenate views → FC   │
+│    ├─ Attention-weighted fusion│
+│    └─ Late fusion: ensemble predictions│
+├─────────────────────────────────┤
+│ 4. Head: 34 binary classifiers │
+│    └─ Shared backbone + task-specific heads │
+└─────────────────────────────────┘
+```
+
+#### 🎯 Track 2: Gait Pattern Classification (5-class)
+
+```
+Kiến trúc đề xuất:
+┌─────────────────────────────────┐
+│ Shared backbone với Track 1     │
+├─────────────────────────────────┤
+│ Classification Head:           │
+│ - Global pooling → [D]         │
+│ - FC layers → [5] logits       │
+│ - Softmax + CrossEntropy       │
+├─────────────────────────────────│
+│ Loss: Weighted CE + F1-aware   │
+└─────────────────────────────────┘
+```
+
+**Thuật toán nên nghiên cứu:**
+| Thuật toán | Ứng dụng | Tài liệu tham khảo |
+|-----------|---------|-------------------|
+| **PoseFormer** | 3D pose từ 2D sequence | [arXiv:2103.15015] |
+| **ST-GCN** | Graph Conv cho skeleton | [CVPR 2018] |
+| **TimesFormer** | Video classification | [ICCV 2021] |
+| **TCN** | Temporal modeling nhẹ | [arXiv:1803.01271] |
+| **Ensemble Learning** | Cải thiện F1-macro |  |
+
+### 🔸 Advanced Techniques (Tuần 6-8)
+
+```python
+# Ví dụ: Multi-view Attention Fusion
+class MultiViewFusion(nn.Module):
+    def forward(self, view_features):  # [4, B, T, D]
+        # Compute attention weights across views
+        attn_weights = self.attention(view_features)  # [4, B, 1, 1]
+        # Weighted sum
+        fused = torch.sum(attn_weights * view_features, dim=0)
+        return fused
+
+# Ví dụ: Geometric Feature Engineering
+def compute_kinematic_features(keypoints_seq):
+    features = []
+    for t in range(len(keypoints_seq)-1):
+        # Joint angles (hip-knee-ankle)
+        angles = compute_angles(keypoints_seq[t])
+        # Angular velocity
+        velocities = keypoints_seq[t+1] - keypoints_seq[t]
+        # Symmetry metrics (left vs right)
+        symmetry = compute_symmetry(keypoints_seq[t])
+        features.append(torch.cat([angles, velocities, symmetry]))
+    return torch.stack(features)
+```
+
+**Kỹ thuật nâng cao từ Kaggle Grandmasters** :
+1. **Pseudo-labeling**: Dùng model mạnh generate label cho unlabeled data
+2. **Test-time augmentation (TTA)**: Flip sequence, average predictions
+3. **Model ensembling**: Weighted average của 3-5 models khác architecture
+4. **Feature blending**: Kết hợp hand-crafted + learned features
+5. **Cross-validation strategy**: Patient-level split (không leak patient giữa train/val)
+
+---
+
+## 🔄 PHẦN 3: PIPELINE STEP-BY-STEP
+
+### 📅 Giai đoạn 1: Foundation (Tuần 1-2)
+
+```bash
+# Setup environment
+conda create -n gait-comp python=3.10
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+pip install pandas numpy scikit-learn matplotlib seaborn
+
+# Clone repo template
+git clone https://github.com/yourname/cvpr2026-gait
+cd cvpr2026-gait
+```
+
+**Checklist tuần 1-2:**
+- [ ] Hiểu format JSON: keypoints, bbox, video_info
+- [ ] Viết DataLoader đọc sequence từ JSON
+- [ ] Visualize keypoints + skeleton (dùng script từ competition)
+- [ ] Tính baseline: Majority class / Random prediction
+- [ ] Setup cross-validation: patient-level split
+
+### 📅 Giai đoạn 2: Baseline Model (Tuần 3-4)
+
+```python
+# Baseline: Simple LSTM + FC
+class GaitBaseline(nn.Module):
+    def __init__(self, input_dim=266, hidden_dim=128, num_classes=34):
+        super().__init__()
+        self.lstm = nn.LSTM(input_dim, hidden_dim, batch_first=True)
+        self.fc_track1 = nn.Linear(hidden_dim, num_classes)  # EVGS
+        self.fc_track2 = nn.Linear(hidden_dim, 5)  # Gait pattern
+    
+    def forward(self, x):  # x: [B, T, 266]
+        _, (h_n, _) = self.lstm(x)
+        feat = h_n[-1]
+        return self.fc_track1(feat), self.fc_track2(feat)
+```
+
+**Mục tiêu:**
+- [ ] Train baseline đạt >60% accuracy Track 1
+- [ ] Implement custom loss: `Loss = 0.5*BCE + 0.5*MSE(total_score)`
+- [ ] Log metrics: Acc per item, RMSE total, F1-macro
+- [ ] Submit first submission để hiểu pipeline Kaggle
+
+### 📅 Giai đoạn 3: Optimization (Tuần 5-7)
+
+```python
+# Advanced: Transformer + Geometric Features
+class AdvancedGaitModel(nn.Module):
+    def __init__(self):
+        super().__init__()
+        # 1. Geometric feature extractor
+        self.geo_extractor = KinematicFeatureExtractor()
+        
+        # 2. Pose encoder (COCO-WholeBody → latent)
+        self.pose_encoder = nn.Sequential(
+            nn.Linear(2 + 1, 64),  # x, y, confidence
+            nn.ReLU(),
+            nn.Linear(64, 128)
+        )
+        
+        # 3. Temporal Transformer
+        encoder_layer = nn.TransformerEncoderLayer(d_model=128, nhead=4)
+        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=3)
+        
+        # 4. Multi-view attention
+        self.view_attention = nn.MultiheadAttention(embed_dim=128, num_heads=4)
+        
+        # 5. Task heads
+        self.head_evgs = nn.Linear(128, 34)
+        self.head_gait = nn.Linear(128, 5)
+```
+
+**Chiến lược tối ưu:**
+```
+✅ Data Augmentation cho sequence:
+   - Temporal jittering (shift time axis)
+   - Keypoint noise injection (Gaussian)
+   - View dropout (randomly drop 1 view during training)
+
+✅ Loss Function Design:
+   - Track 1: α*BCE(items) + β*MSE(total) + γ*FocalLoss(hard items)
+   - Track 2: Weighted CrossEntropy + Label Smoothing
+
+✅ Training Strategy:
+   - Warmup + Cosine annealing LR schedule
+   - Gradient clipping + Early stopping
+   - Patient-level cross-validation (5-fold)
+```
+
+### 📅 Giai đoạn 4: Ensemble & Submission (Tuần 8-12)
+
+```python
+# Ensemble Strategy
+def ensemble_predictions(models_list, data_loader, weights=None):
+    all_preds_track1 = []
+    all_preds_track2 = []
+    
+    for model in models_list:
+        model.eval()
+        preds1, preds2 = [], []
+        with torch.no_grad():
+            for batch in data_loader:
+                p1, p2 = model(batch['sequence'])
+                preds1.append(torch.sigmoid(p1).cpu())
+                preds2.append(torch.softmax(p2, dim=1).cpu())
+        all_preds_track1.append(torch.cat(preds1))
+        all_preds_track2.append(torch.cat(preds2))
+    
+    # Weighted average
+    if weights is None:
+        weights = [1.0/len(models_list)] * len(models_list)
+    
+    final_p1 = sum(w*p for w,p in zip(weights, all_preds_track1))
+    final_p2 = sum(w*p for w,p in zip(weights, all_preds_track2))
+    return final_p1, final_p2
+```
+
+**Checklist final:**
+- [ ] Train 3-5 models với kiến trúc khác nhau (LSTM, TCN, Transformer)
+- [ ] Implement TTA: flip temporal axis, average predictions
+- [ ] Calibrate thresholds cho Track 1 (optimize F1 thay vì accuracy)
+- [ ] Generate submission CSV đúng format competition
+- [ ] Viết technical report 4 trang (LaTeX template CVPR)
+- [ ] Public code repo + README reproducibility
+
+---
+
+## 🏆 CHIẾN LƯỢC TỪ KAGGLE GRANDMASTERS
+
+### 🔥 5 Bí quyết "winning" từ top competitors :
+
+1. **Understand the metric deeply**
+   ```python
+   # Đừng optimize accuracy đơn thuần!
+   # Track 1: S1 = (Acc + 1 - NRMSE)/2 → Cần cân bằng cả 2
+   # Track 2: Macro F1 → Tránh bias class majority
+   
+   def custom_loss_track1(pred_items, pred_total, target_items, target_total):
+       bce = F.binary_cross_entropy_with_logits(pred_items, target_items)
+       mse = F.mse_loss(pred_total, target_total)
+       return 0.6 * bce + 0.4 * mse  # Tune weight này!
+   ```
+
+2. **Patient-level validation is NON-NEGOTIABLE**
+   ```python
+   # SAI: Random split frames → data leakage
+   # ĐÚNG: Split by patient_id
+   from sklearn.model_selection import GroupKFold
+   
+   gkf = GroupKFold(n_splits=5)
+   for train_idx, val_idx in gkf.split(X, y, groups=patient_ids):
+       # Train/val không overlap patient
+   ```
+
+3. **Feature engineering > Model complexity** (với dataset nhỏ)
+   ```python
+   # Hand-crafted kinematic features thường giúp nhiều hơn tăng model size:
+   features = {
+       'joint_angles': compute_angles(keypoints),      # Hip/knee/ankle angles
+       'symmetry_index': left_right_symmetry(keypoints), # L vs R difference
+       'temporal_derivatives': velocity_acceleration(seq), # First/second order
+       'gait_cycle_phase': estimate_phase(keypoints)   # Stance vs swing
+   }
+   ```
+
+4. **Ensemble diversity > Ensemble size**
+   ```
+   Tốt hơn: 3 models khác nhau (LSTM + TCN + Transformer)
+   Hơn là: 10 models cùng architecture với seed khác nhau
+   ```
+
+5. **Post-processing matters**
+   ```python
+   # Track 1: Threshold tuning per item (không dùng 0.5 cố định)
+   best_thresholds = []
+   for item_idx in range(34):
+       best_t, best_f1 = 0.5, 0
+       for t in np.arange(0.3, 0.7, 0.05):
+           preds = (probabilities[:, item_idx] > t).astype(int)
+           f1 = f1_score(y_true[:, item_idx], preds)
+           if f1 > best_f1:
+               best_f1, best_t = f1, t
+       best_thresholds.append(best_t)
+   ```
+
+---
+
+## 📚 LỘ TRÌNH HỌC 3 THÁNG CHI TIẾT
+
+### 🗓️ Tháng 1: Foundation + Baseline
+| Tuần | Mục tiêu | Tài nguyên |
+|------|---------|-----------|
+| 1 | Python/PyTorch cơ bản, hiểu dataset | [PyTorch Tutorial](https://pytorch.org/tutorials/), Kaggle Learn |
+| 2 | Data loading, visualization, baseline metric | Competition starter notebook, COCO-WholeBody docs |
+| 3 | Implement LSTM baseline, train/eval loop | [PyTorch Lightning](https://www.pytorchlightning.ai/) |
+| 4 | Submit first solution, debug pipeline | Kaggle submission guide, discussion forum |
+
+### 🗓️ Tháng 2: Advanced Modeling
+| Tuần | Mục tiêu | Tài nguyên |
+|------|---------|-----------|
+| 5 | Nghiên cứu ST-GCN / PoseFormer | [ST-GCN code](https://github.com/yysijie/st-gcn), [PoseFormer](https://github.com/zczcwh/PoseFormer) |
+| 6 | Implement multi-view fusion + geometric features | Paper: "Exploiting temporal information for 3D pose"  |
+| 7 | Optimize loss function + CV strategy | Scikit-learn docs, Kaggle CV guides |
+| 8 | Train 2-3 diverse models, start ensembling | [Weights & Biases](https://wandb.ai/) for experiment tracking |
+
+### 🗓️ Tháng 3: Polish + Submission
+| Tuần | Mục tiêu | Tài nguyên |
+|------|---------|-----------|
+| 9 | TTA + threshold tuning + pseudo-labeling | Kaggle winning solutions analysis  |
+| 10 | Final ensemble, generate submission CSV | Competition rules, sample submission format |
+| 11 | Write technical report (LaTeX), prepare code repo | [CVPR 2026 LaTeX template](https://github.com/cvpr2026) |
+| 12 | Final submission, monitor leaderboard, iterate | Kaggle discussion, competitor analysis |
+
+---
+
+## 🛠️ RESOURCE LIST
+
+### 📦 Code & Libraries
+```bash
+# Core
+pip install torch torchvision torchaudio
+
+# Data & Utils
+pip install pandas numpy scikit-learn opencv-python
+
+# Visualization
+pip install matplotlib seaborn plotly
+
+# Advanced (optional)
+pip install pytorch-lightning wandb timm einops
+```
+
+### 📖 Tài liệu học
+1. **Pose Estimation**: [COCO-WholeBody](https://github.com/jin-s13/COCO-WholeBody)
+2. **Gait Analysis**: Review paper  - "A comprehensive review of gait analysis using deep learning"
+3. **EVGS Automation**:  - Các nghiên cứu automated EVGS scoring
+4. **CP Gait Classification**:  - ML cho phân loại dáng đi CP
+
+### 💡 Cộng đồng hỗ trợ
+- Kaggle Discussion: [Competition Forum](https://www.kaggle.com/competitions/cvpr-2026-the-first-ai-children-challenge/discussion)
+- Email organizers: boyil2@illinois.edu 
+- CVPR CV4CHL Workshop: [pediamedai.com/cv4chl/](https://pediamedai.com/cv4chl/) 
+
+---
+
+## 🎯 LỜI KHUYÊN CUỐI CÙNG
+
+> ✨ **"Đừng chase SOTA model ngay từ đầu. Hãy bắt đầu từ baseline đơn giản, hiểu data, hiểu metric, rồi mới optimize."**
+
+**3 nguyên tắc vàng:**
+1. **Reproducibility first**: Code sạch, seed cố định, log đầy đủ
+2. **Validation strategy > Model architecture**: Patient-level CV là bắt buộc
+3. **Metric-driven development**: Luôn test xem thay đổi có cải thiện S1/S2 thật không
+
+**Nếu bạn chỉ làm được 3 việc:**
+```
+✅ 1. Implement patient-level cross-validation
+✅ 2. Tune thresholds per EVGS item (Track 1)
+✅ 3. Ensemble 3 diverse models (không cùng architecture)
+→ Bạn đã có thể top 30-50% leaderboard!
+```
+
+Chúc bạn thành công! 🚀 Nếu cần code template chi tiết cho phần nào, hãy hỏi mình nhé!
+
+### USER
+Hãy đưa ra những bài báo, video ytb, các kiến thức, Cousera hay bất kỳ web hay sách nào để tôi hoàn thành dự án sau tốt nhất có thể
+
+### ASSISTANT
+# 📚 COMPLETE RESOURCE LIBRARY: CVPR 2026 Children Gait Competition
+
+> *Tổng hợp đầy đủ bài báo, video, khóa học, sách và công cụ để bạn chinh phục cuộc thi trong 3 tháng*
+
+---
+
+## 🎓 PHẦN 1: KHÓA HỌC ONLINE (COURsera & NỀN TẢNG)
+
+### 🔹 Nền tảng Machine Learning/Deep Learning
+| Khóa học | Nền tảng | Level | Link | Tại sao cần học? |
+|---------|---------|-------|------|-----------------|
+| **Machine Learning Specialization** (Andrew Ng) | Coursera  | Beginner | [Link](https://www.coursera.org/specializations/machine-learning-introduction) | Nắm vững fundamentals: regression, classification, neural networks |
+| **Deep Learning Specialization** (Andrew Ng) | Coursera/DeepLearning.AI  | Beginner-Intermediate | [Link](https://www.deeplearning.ai/courses/deep-learning-specialization/) | Hiểu sâu về CNN, RNN, optimization - nền tảng cho pose sequence modeling |
+| **Advanced Learning Algorithms** | Coursera  | Intermediate | [Link](https://www.coursera.org/learn/advanced-learning-algorithms) | Tree-based models, ensemble methods - hữu ích cho Track 2 classification |
+| **Intro to Deep Learning** | MIT OpenCourseWare | Beginner | [Link](http://introtodeeplearning.com/) | Miễn phí, code-heavy, phù hợp người yếu toán |
+
+### 🔹 Computer Vision & Pose Estimation
+| Khóa học | Nền tảng | Level | Link | Ứng dụng trong bài toán |
+|---------|---------|-------|------|---------------------|
+| **Computer Vision Basics** | Coursera | Beginner | [Link](https://www.coursera.org/specializations/computer-vision) | Hiểu image processing, feature extraction |
+| **Pose Estimation Course** | Computer Vision Zone  | Intermediate | [Link](https://www.computervision.zone/courses/pose-estimation/) | **Trực tiếp áp dụng**: xử lý keypoints COCO-WholeBody |
+| **Human Pose Estimation Training** | CodersArts  | Intermediate | [Link](https://www.training.codersarts.com/post/human-pose-estimation-computer-vision-online-training-course) | Học cách extract và preprocess skeleton data |
+| **Free Computer Vision Course** | Great Learning  | Beginner | [Link](https://www.mygreatlearning.com/academy/learn-for-free/courses/introduction-to-computer-vision) | Ôn lại CNN, image augmentation |
+
+### 🔹 PyTorch & Sequence Modeling
+| Khóa học | Nền tảng | Level | Link | Ứng dụng |
+|---------|---------|-------|------|---------|
+| **PyTorch for Deep Learning** | freeCodeCamp YouTube  | Beginner | [YouTube](https://www.youtube.com/watch?v=V_xro1bcAuA) | 37-hour course miễn phí, code-along |
+| **Kaggle Learn: PyTorch** | Kaggle  | Beginner | [Link](https://www.kaggle.com/learn/pytorch) | Ngắn gọn, thực hành ngay trên notebook |
+| **Time Series with PyTorch** | O'Reilly Book  | Intermediate | [Link](https://www.oreilly.com/library/view/time-series-with/9781805128182/) | **Cực kỳ quan trọng**: modeling sequence keypoints |
+| **Deep Learning for Time Series Cookbook** | Packt  | Intermediate | [GitHub Code](https://github.com/PacktPublishing/Deep-Learning-for-Time-Series-Data-Cookbook) | Code mẫu LSTM/TCN/Transformer cho sequence data |
+
+---
+
+## 📺 PHẦN 2: YOUTUBE CHANNELS & VIDEO TUTORIALS
+
+### 🔹 PyTorch & Deep Learning Basics
+| Channel | Playlist | Nội dung | Link |
+|---------|---------|---------|------|
+| **Sentdex**  | "PyTorch Basics" | Tutorial từ zero đến LSTM, CNN | [YouTube](https://www.youtube.com/c/sentdex) |
+| **Aladdin Persson**  | "PyTorch Tutorials" | Code RNN/LSTM/Transformer từ scratch, rất rõ ràng | [GitHub](https://github.com/aladdinpersson/Machine-Learning-Collection) |
+| **freeCodeCamp**  | "Computer Vision with Deep Learning" | Khóa 37h miễn phí, bao quát từ CNN đến Transformer | [YouTube](https://www.youtube.com/c/Freecodecamp) |
+| **3Blue1Brown**  | "Neural Networks" | Giải thích trực quan về backprop, attention - giúp hiểu bản chất | [YouTube](https://www.youtube.com/c/3blue1brown) |
+
+### 🔹 Pose Estimation & Gait Analysis
+| Video/Channel | Nội dung | Ứng dụng | Link |
+|--------------|---------|---------|------|
+| **MediaPipe Pose Tutorial**  | Extract pose từ video bằng MediaPipe | Preprocessing keypoints cho dataset | [GitHub Tutorial](https://github.com/rmeziatisab/PoseDetection) |
+| **BleedAI Academy**  | Real-time 3D pose + tính góc khớp | Feature engineering: joint angles cho EVGS | [Tutorial](https://bleedaiacademy.com/introduction-to-pose-detection-and-basic-pose-classification/) |
+| **OpenGait Tutorial**  | Codebase gait recognition SOTA | Tham khảo architecture cho Track 2 | [GitHub](https://github.com/ShiqiYu/OpenGait) |
+| **HCN-pytorch**  | Skeleton-based action recognition | Model baseline cho sequence keypoints | [GitHub](https://github.com/huguyuehuhu/HCN-pytorch) |
+
+### 🔹 Kaggle Strategy & Competition Tips
+| Video | Nội dung | Link |
+|-------|---------|------|
+| **"How to Win Kaggle Competitions"**  | Chiến lược từ Grandmaster: CV, ensembling, feature engineering | [Kaggle Discussion](https://www.kaggle.com/general/210504) |
+| **"Practical Guide for Kaggle"**  | 10 tips từ top competitors: threshold tuning, pseudo-labeling | [Scribd Guide](https://it.scribd.com/document/645858005/1-Practical-guide-for-Kaggle-competitions) |
+| **"Beginner's Guide to Winning Kaggle"**  | Roadmap 3 tháng cho người mới | [Kaggle Guide](https://www.kaggle.com/general/561951) |
+
+---
+
+## 📄 PHẦN 3: BÀI BÁO NGHIÊN CỨU (PAPERS) - THEO CHỦ ĐỀ
+
+### 🔹 EVGS & Automated Gait Scoring (Track 1)
+| Paper | Năm | Đóng góp chính | Link |
+|-------|-----|---------------|------|
+| **Automated Estimation of EVGS Using OpenPose**  | 2024 | Hệ thống tự động tính EVGS từ video + pose estimation | [IEEE](https://ieeexplore.ieee.org/iel8/11105571/11105544/11105689.pdf) |
+| **Automated Implementation of EVGS from Smartphone Video**  | 2023 | Algorithm tính 17 items EVGS từ handheld video | [PubMed](https://pubmed.ncbi.nlm.nih.gov/37430751/) |
+| **Automated Video Quality Assessment for EVGS**  | 2025 | Framework đánh giá chất lượng video đầu vào cho EVGS | [MDPI](https://www.mdpi.com/2409-9279/8/4/71) |
+
+### 🔹 Cerebral Palsy Gait Classification (Track 2)
+| Paper | Năm | Phương pháp | Link |
+|-------|-----|------------|------|
+| **Application of Deep Learning Models in Classification of Sagittal Gait Patterns**  | 2025 | CNN/LSTM phân loại gait patterns CP | [IEEE](https://ieeexplore.ieee.org/document/10895682/) |
+| **Automatic Classification of Gait Patterns in CP Patients**  | 2024 | Ensemble learning cho 5-class gait classification | [MDPI](https://www.mdpi.com/2673-4052/6/4/71) |
+| **Deep Learning-Based Classification of Hemiplegia and Diplegia**  | 2025 | RNN phân tích time-series force data | [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC11909225/) |
+
+### 🔹 Skeleton-Based Sequence Modeling (Kiến trúc Model)
+| Paper | Năm | Kiến trúc | Ứng dụng |
+|-------|-----|----------|---------|
+| **PoseFormer: Transformer for 3D Pose Estimation** | 2021 | Temporal Transformer encoder | Modeling temporal dependencies của keypoints  |
+| **ST-GCN: Spatial-Temporal Graph Convolutional Networks** | 2018 | Graph CNN trên skeleton graph | Extract spatio-temporal features từ pose sequences  |
+| **OpenGait: Revisiting Gait Recognition**  | 2023 | Flexible gait recognition framework | Codebase tham khảo cho Track 2 |
+| **Unified Pose Sequence Modeling** | 2023 | Unified framework cho pose-based tasks | Design pattern cho multi-task learning (Track 1+2)  |
+
+### 🔹 Survey Papers (Đọc để có overview)
+| Paper | Nội dung | Link |
+|-------|---------|------|
+| **Deep Learning for Quantified Gait Analysis: A Systematic Review**  | Tổng quan 100+ papers về DL trong gait analysis | [IEEE](https://ieeexplore.ieee.org/document/10613400/) |
+| **A Survey of AI in Gait-Based Neurodegenerative Disease Diagnosis**  | AI cho diagnosis bệnh thần kinh qua gait | [arXiv](https://arxiv.org/abs/2405.13082) |
+| **Emerging Trends in Gait Recognition Based on Deep Learning**  | Survey về gait recognition: methods, datasets, challenges | [PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC11323174/) |
+
+---
+
+## 💻 PHẦN 4: GITHUB REPOS & CODE TEMPLATES
+
+### 🔹 Pose Estimation & Keypoint Processing
+```bash
+# 1. MediaPipe Pose (nhẹ, dễ dùng cho preprocessing)
+git clone https://github.com/google/mediapipe
+# Tutorial: https://github.com/rmeziatisab/PoseDetection 
+
+# 2. COCO-WholeBody (format keypoints của dataset competition)
+git clone https://github.com/jin-s13/COCO-WholeBody
+
+# 3. OpenPose (nếu cần alternative pose estimator)
+git clone https://github.com/CMU-Perceptual-Computing-Lab/openpose
+```
+
+### 🔹 Sequence Modeling Templates
+```bash
+# LSTM/GRU baseline cho sequence keypoints
+git clone https://github.com/aladdinpersson/Machine-Learning-Collection
+# File: ML/Pytorch/Basics/pytorch_rnn_gru_lstm.py 
+
+# TCN (Temporal Convolutional Network) - alternative cho LSTM
+git clone https://github.com/paul-krug/pytorch-tcn 
+# Hoặc: pip install pytorch-tcn 
+
+# Transformer cho sequence modeling
+git clone https://github.com/sgrvinod/a-PyTorch-Tutorial-to-Transformers 
+```
+
+### 🔹 Skeleton-Based Action Recognition (Rất sát bài toán)
+```bash
+# OpenGait - SOTA gait recognition framework 
+git clone https://github.com/ShiqiYu/OpenGait
+# Paper: https://arxiv.org/abs/2211.06597
+
+# HCN-pytorch - Hierarchical aggregation cho skeleton data 
+git clone https://github.com/huguyuehuhu/HCN-pytorch
+
+# MMAction2 - Toolbox đa dạng models cho skeleton action recognition 
+git clone https://github.com/open-mmlab/mmaction2
+# Docs: https://mmaction2.readthedocs.io/en/dev-1.x/model_zoo/skeleton.html
+```
+
+### 🔹 Kaggle Competition Utilities
+```bash
+# Template submission + CV strategy
+git clone https://github.com/alexeygrigorev/kaggle-template
+
+# Ensemble utilities
+git clone https://github.com/insikk/kaggle-ensemble-utils
+
+# Threshold tuning & metric optimization
+# Tham khảo: https://www.kaggle.com/code/... (search "threshold optimization")
+```
+
+---
+
+## 📖 PHẦN 5: SÁCH & TÀI LIỆU THAM KHẢO
+
+### 🔹 Sách về Deep Learning & Time Series
+| Sách | Tác giả | Nội dung phù hợp | Link |
+|-----|--------|-----------------|------|
+| **Deep Learning for Time Series Cookbook**  | V. Santos, A. Leite | LSTM/TCN/Transformer cho sequence data, code PyTorch | [Amazon](https://www.amazon.com/Deep-Learning-Time-Data-Cookbook/dp/1805129236) |
+| **Time Series Forecasting using Deep Learning**  | M. Patel | Forecasting + classification với PyTorch | [Amazon](https://www.amazon.com/Time-Forecasting-using-Deep-Learning/dp/9391392571) |
+| **Deep Learning** (Flower Book) | Ian Goodfellow | Reference lý thuyết: CNN, RNN, optimization | [MIT Press](https://www.deeplearningbook.org/) |
+
+### 🔹 Sách về Computer Vision & Pose
+| Sách | Nội dung | Link |
+|-----|---------|------|
+| **Computer Vision: Algorithms and Applications** | Richard Szeliski | Nền tảng image processing, feature extraction | [Book Website](http://szeliski.org/Book/) |
+| **Deep Learning for Vision Systems** | Mohamed Elgendy | CNN, object detection, pose estimation applications | [Amazon](https://www.amazon.com/Deep-Learning-Vision-Systems-techniques/dp/1617295949) |
+
+### 🔹 Tài liệu Domain: Gait Analysis & Cerebral Palsy
+| Tài liệu | Nội dung | Link |
+|---------|---------|------|
+| **Physiopedia: Classification of Gait Patterns in CP**  | Mô tả chi tiết 5 gait patterns: True Equinus, Jump Gait, Apparent Equinus, Crouch Gait, WNL | [Physiopedia](https://www.physio-pedia.com/Classification_of_Gait_Patterns_in_Cerebral_Palsy) |
+| **EVGS Scoring Guide** (từ competition) | Tiêu chí chấm 17 items EVGS | [Competition Page](https://kaggle.com/competitions/cvpr-2026-the-first-ai-children-challenge) |
+| **COCO-WholeBody Keypoint Format** | Documentation 133 keypoints format | [GitHub](https://github.com/jin-s13/COCO-WholeBody) |
+
+---
+
+## 🛠️ PHẦN 6: CÔNG CỤ & THƯ VIỆN PYTHON
+
+### 🔹 Cài đặt environment cơ bản
+```bash
+# Core dependencies
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+pip install numpy pandas matplotlib seaborn scikit-learn opencv-python
+
+# Sequence modeling
+pip install pytorch-lightning einops timm
+
+# Visualization & debugging
+pip install wandb tensorboard plotly
+
+# Competition utilities
+pip install kaggle submitit
+```
+
+### 🔹 Libraries chuyên biệt cho bài toán
+```python
+# 1. Xử lý skeleton/pose data
+from torch_geometric.nn import GCNConv, GATConv  # Graph Neural Networks
+import mediapipe as mp  # Pose estimation preprocessing
+
+# 2. Temporal modeling
+from torch.nn import TransformerEncoder, TransformerEncoderLayer  # Transformer
+from pytorch_tcn import TCN  # Temporal Convolutional Network 
+
+# 3. Multi-view fusion
+import torch.nn.functional as F
+# Custom attention fusion hoặc late fusion
+
+# 4. Evaluation metrics
+from sklearn.metrics import f1_score, accuracy_score, mean_squared_error
+# Custom: NRMSE, Macro-F1 per competition rules
+```
+
+---
+
+## 🗓️ LỘ TRÌNH HỌC 3 THÁNG VỚI RESOURCES
+
+### 📅 Tháng 1: Foundation (Tuần 1-4)
+```
+Tuần 1: 
+✅ Coursera: Machine Learning Specialization - Week 1-2 
+✅ YouTube: Sentdex PyTorch Basics - Videos 1-5 
+✅ Đọc: COCO-WholeBody format + competition dataset description
+
+Tuần 2:
+✅ Coursera: Deep Learning Specialization - Course 1 (Neural Networks) 
+✅ Kaggle Learn: PyTorch course 
+✅ Code: Viết DataLoader đọc JSON keypoints sequence
+
+Tuần 3:
+✅ YouTube: Aladdin Persson - LSTM/GRU tutorial 
+✅ Sách: Deep Learning for Time Series - Chapter 1-3 
+✅ Code: Baseline LSTM model cho Track 1
+
+Tuần 4:
+✅ Đọc paper: Automated EVGS Estimation 
+✅ Implement: Custom loss (BCE + MSE) cho Track 1
+✅ Submit: First baseline submission lên Kaggle
+```
+
+### 📅 Tháng 2: Advanced Modeling (Tuần 5-8)
+```
+Tuần 5:
+✅ Đọc paper: PoseFormer / ST-GCN 
+✅ Code: Implement Transformer encoder cho sequence modeling
+✅ Thử: Geometric feature engineering (joint angles, symmetry)
+
+Tuần 6:
+✅ Đọc paper: OpenGait framework 
+✅ Code: Multi-view fusion module (early/late fusion)
+✅ Experiment: So sánh LSTM vs TCN vs Transformer
+
+Tuần 7:
+✅ Đọc paper: CP Gait Classification with DL 
+✅ Code: Track 2 classification head + weighted CE loss
+✅ Implement: Patient-level cross-validation (GroupKFold)
+
+Tuần 8:
+✅ Đọc: Survey paper về gait analysis 
+✅ Code: Ensemble 2-3 models khác architecture
+✅ Optimize: Threshold tuning per EVGS item (Track 1)
+```
+
+### 📅 Tháng 3: Polish & Submission (Tuần 9-12)
+```
+Tuần 9:
+✅ Kaggle Guide: Winning strategies 
+✅ Implement: Test-time augmentation (flip sequence, average)
+✅ Implement: Pseudo-labeling cho unlabeled frames (nếu có)
+
+Tuần 10:
+✅ Code: Final ensemble pipeline (3-5 models)
+✅ Tune: Hyperparameters với validation set
+✅ Generate: Submission CSV đúng format competition
+
+Tuần 11:
+✅ Viết: Technical report 4 trang (LaTeX CVPR template)
+✅ Prepare: Public code repo + README reproducibility
+✅ Review: Competition rules + evaluation metrics
+
+Tuần 12:
+✅ Final submission + monitor leaderboard
+✅ Iterate: Nếu còn thời gian, thử feature blending / model stacking
+✅ Prepare: Presentation slides (nếu vào top)
+```
+
+---
+
+## 🎯 LỜI KHUYÊN CUỐI CÙNG TỪ EXPERT
+
+> ✨ **"Đừng đọc tất cả papers ngay từ đầu. Hãy bắt đầu từ code baseline, hiểu data, rồi mới đọc paper để cải thiện."**
+
+### 3 nguyên tắc học hiệu quả:
+1. **Code-first approach**: Đọc 1 paper → Implement ngay 1 phần nhỏ → Hiểu sâu hơn là đọc 10 papers mà không code
+2. **Metric-driven learning**: Luôn test xem thay đổi có cải thiện S1/S2 thật không, đừng chase SOTA vô nghĩa
+3. **Community engagement**: Tham gia Kaggle Discussion , hỏi organizers qua email boyil2@illinois.edu
+
+### Nếu chỉ có thể học 5 resources:
+```
+✅ 1. Coursera: Deep Learning Specialization (Course 1+2) 
+✅ 2. YouTube: Aladdin Persion PyTorch LSTM/Transformer 
+✅ 3. Paper: Automated EVGS Estimation  - sát bài toán nhất
+✅ 4. GitHub: OpenGait  - codebase tham khảo architecture
+✅ 5. Kaggle Guide: Winning Strategies  - chiến lược competition
+```
+
+> 🚀 **Bonus Tip**: Tạo một "learning journal" (Notion/GitHub) ghi lại: (1) Code snippets quan trọng, (2) Insights từ papers, (3) Results của mỗi experiment. Điều này giúp bạn review nhanh và viết technical report dễ dàng hơn.
+
+Chúc bạn thành công chinh phục CVPR 2026 Children Gait Challenge! Nếu cần giải thích chi tiết code cho phần nào, hãy hỏi mình nhé! 💪
