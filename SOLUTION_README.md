@@ -1,239 +1,184 @@
-# CVPR 2026 - The First AI for Children Challenge
-## Complete Solution Framework
+# 🏆 CVPR 2026 - Children Gait Challenge Solution
 
-### 📋 Project Overview
+## Tổng quan
 
-This repository contains the complete solution for the **CVPR 2026 Children Gait Visual Analysis Competition** in the CV4CHL Workshop. Our approach uses Spatial-Temporal Graph Convolutional Networks (ST-GCN) to analyze children's gait patterns from 2D keypoint sequences.
+Giải pháp hoàn chỉnh cho cuộc thi **"[CVPR 2026] The First AI for Children Challenge"** - Track 1 (EVGS Scoring) và Track 2 (Gait Classification).
 
----
-
-### 🏆 Competition Tracks
-
-#### Track 1: EVGS Scoring
-- **Task**: Predict 34 binary EVGS (Edinburgh Visual Gait Score) metrics (17 items × 2 limbs)
-- **Input**: 2D keypoint sequences
-- **Output**: Binary predictions (0/1) for each item + total score
-- **Metrics**: Accuracy + NRMSE (Normalized Root Mean Square Error)
-
-#### Track 2: Gait Pattern Classification
-- **Task**: Classify gait patterns in Bilateral Spastic Cerebral Palsy
-- **Classes**: type1, type2, type3, type4, WNL (normal)
-- **Metrics**: Accuracy + Macro F1 Score
-
----
-
-### 📁 Project Structure
+## 📁 Cấu trúc dự án
 
 ```
 /workspace/
-├── phase1_data_analysis.py       # EDA and data preprocessing
-├── phase2_model_architecture.py  # ST-GCN model implementation
-├── phase3_training_pipeline.py   # Training loop and submission generator
-├── track1_train.json             # Track 1 training labels
-├── track2_train.json             # Track 2 training labels
-└── outputs/
-    └── submission.csv            # Generated submission file
+├── cvpr2026_complete_solution.py    # Script chính chứa toàn bộ pipeline
+├── data/
+│   ├── track1_train_raw.json        # Metadata Track 1 (94 bệnh nhân)
+│   └── track2_train_raw.json        # Metadata Track 2 (22 bệnh nhân)
+├── submissions/
+│   └── submission.csv               # File nộp cuối cùng (25 samples)
+├── models/                          # Thư mục lưu model checkpoints
+└── SOLUTION_README.md              # File hướng dẫn này
 ```
 
----
+## 🎯 Giải pháp kỹ thuật
 
-### 🔧 Installation
+### Kiến trúc mô hình: ST-GCN (Spatial-Temporal Graph Convolutional Network)
 
-```bash
-pip install torch numpy pandas matplotlib seaborn scikit-learn tqdm
-```
+- **Input**: Chuỗi keypoints 2D (T=60 frames, K=17 keypoints, C=2 tọa độ)
+- **Backbone**: 3 khối Spatial-Temporal Convolution
+  - Block 1: 2 → 64 channels
+  - Block 2: 64 → 128 channels
+  - Block 3: 128 → 256 channels
+- **Track 1 Head**: 34 binary classifiers (17 items × 2 bên) + regression cho total score
+- **Track 2 Head**: 5-class classification (type1, type2, type3, type4, WNL)
 
----
+### Xử lý dữ liệu
 
-### 🚀 Quick Start
+1. **Keypoint Preprocessing**:
+   - Chuẩn hóa tọa độ về [0, 1]
+   - Z-score normalization
+   - Smoothing bằng moving average
 
-#### Step 1: Data Analysis
-```bash
-python phase1_data_analysis.py
-```
-- Loads and analyzes training data
-- Computes class distributions
-- Identifies imbalanced classes
-- Creates PyTorch datasets
+2. **Data Augmentation**:
+   - Temporal jittering
+   - Left-right flipping
+   - Noise injection
 
-#### Step 2: Model Architecture Test
-```bash
-python phase2_model_architecture.py
-```
-- Tests ST-GCN backbone
-- Verifies forward pass for both tracks
-- Validates loss functions
+3. **Class Imbalance Handling** (Track 2):
+   - Weighted Cross-Entropy Loss
+   - Class weights: WNL/type4 = 4.4, type2/type3 = 0.6
 
-#### Step 3: Training & Submission
-```bash
-python phase3_training_pipeline.py
-```
-- Trains models for both tracks
-- Generates submission CSV file
-- Saves best model checkpoints
+### Hàm Loss
 
----
-
-### 🧠 Model Architecture
-
-#### ST-GCN Backbone
-- **Input**: (batch, seq_len=50, num_joints=17, channels=2)
-- **Spatial GCN**: Graph convolutions on skeleton graph (COCO 17 keypoints)
-- **Temporal Conv**: 1D convolutions along time dimension
-- **Blocks**: 4 ST-GCN blocks with increasing channels (64→128→256→512)
-- **Output**: Global features (512-dim) + per-joint features
-
-#### Track 1 Head
-- 34 independent binary classification heads (one per EVGS item)
-- Multi-task regression head for total scores
-- Combined BCE + MSE loss
-
-#### Track 2 Head
-- Shared FC layers with limb-specific classification heads
-- 5-class softmax for each limb (left/right)
-- Focal Loss with class weights for imbalance handling
-
----
-
-### 📊 Key Insights from EDA
-
-#### Track 1 Findings:
-- **94 patients** in training set
-- **Imbalanced items**: Items 6, 13, 17 have <12% positive rate
-- **Total score range**: 0-14 per limb
-- **Mean total score**: ~5.8-6.0
-
-#### Track 2 Findings:
-- **22 patients** only (very small dataset!)
-- **Severe class imbalance**:
-  - WNL and type4: only 2 samples each (4.55%)
-  - type2 and type3: ~34-36% of data
-- **90.9%** patients have same gait subtype on both sides
-
----
-
-### 🎯 Training Strategy
-
-#### Handling Class Imbalance (Track 2):
+**Track 1**:
 ```python
-class_weights = {
-    'type1': 0.8,
-    'type2': 0.59,
-    'type3': 0.63,
-    'type4': 4.4,  # High weight for rare class
-    'WNL': 4.4     # High weight for rare class
-}
+Loss = (BCE_left + BCE_right) / 34 + MSE_total
 ```
 
-#### Data Augmentation:
-- Gaussian noise (std=0.01)
-- Random scaling (0.9-1.1)
-- Small rotations (-10° to +10°)
-- Time masking (10% probability)
-- Joint masking (5% probability)
-
-#### Optimization:
-- **Optimizer**: AdamW (lr=1e-3, weight_decay=1e-4)
-- **Scheduler**: Cosine Annealing
-- **Early Stopping**: Patience=15 epochs
-- **Gradient Clipping**: max_norm=1.0
-
----
-
-### 📈 Evaluation Metrics
-
-#### Track 1 Score:
+**Track 2**:
+```python
+Loss = (WeightedCE_left + WeightedCE_right) / 2
 ```
-Acc = (1/N) * Σ I[y_i == ŷ_i]
+
+## 🚀 Cách sử dụng
+
+### Yêu cầu hệ thống
+
+```bash
+pip install torch torchvision torchaudio
+pip install scikit-learn pandas numpy opencv-python
+```
+
+### Chạy training và tạo submission
+
+```bash
+python cvpr2026_complete_solution.py
+```
+
+Output sẽ được lưu tại `submissions/submission.csv`
+
+### Với dữ liệu keypoints thực tế
+
+Hiện tại script đang sử dụng **mock keypoints** (dữ liệu giả lập) vì dataset đầy đủ cần tải từ Google Drive. Để sử dụng dữ liệu thật:
+
+1. **Tải dataset đầy đủ**:
+   ```
+   https://drive.google.com/file/d/1Gv5wWU6cR4pjl5qlGbtQP46-G3pffiYY/view
+   ```
+
+2. **Sửa hàm `_generate_mock_keypoints`** trong `KeypointSequenceDataset` để load keypoints từ JSON files:
+   ```python
+   def _load_real_keypoints(self, patient_id: int) -> np.ndarray:
+       # Load từ thư mục keypoints/
+       # Mỗi patient có 4 views: left, right, forward, backward
+       # Mỗi view có nhiều frame_*.json files
+       pass
+   ```
+
+3. **Training đầy đủ** (50-100 epochs thay vì 5 epochs demo)
+
+## 📊 Định dạng Submission
+
+File `submission.csv` có 38 cột:
+
+| Cột | Mô tả | Track 1 | Track 2 |
+|-----|-------|---------|---------|
+| ID | Patient ID với prefix | `track1-{id}` | `track2-{id}` |
+| L1-L17 | EVGS scores trái | 0/1 | -1 |
+| R1-R17 | EVGS scores phải | 0/1 | -1 |
+| Total | Tổng score | Integer | -1 |
+| Left_gait_subtype | Dáng đi trái | -1 | type1-4/WNL |
+| Right_gait_subtype | Dáng đi phải | -1 | type1-4/WNL |
+
+### Test set IDs
+
+- **Track 1**: [4, 5, 18, 26, 28, 40, 42, 43, 47, 48, 53, 54, 72, 78, 83, 85] (16 patients)
+- **Track 2**: [4, 6, 7, 13, 26, 35, 39, 42, 50] (9 patients)
+
+## 📈 Metrics đánh giá
+
+### Track 1 - EVGS Scoring
+
+```python
+Accuracy = (1/N) * Σ I[y_i == ŷ_i]
 RMSE = sqrt((1/M) * Σ (p_i - g_i)²)
 NRMSE = RMSE / 34
-S1 = (Acc + (1 - NRMSE)) / 2
+S1 = (Accuracy + (1 - NRMSE)) / 2
 ```
 
-#### Track 2 Score:
-```
-F1_k = 2 * P_k * R_k / (P_k + R_k)  # For each class k
+### Track 2 - Gait Classification
+
+```python
+F1_k = 2 * P_k * R_k / (P_k + R_k)  # Cho mỗi class k
 F1_macro = (1/5) * Σ F1_k
 Acc2 = (1/M) * Σ TP_k
 S2 = (Acc2 + F1_macro) / 2
 ```
 
-#### Final Score:
-```
+### Final Score
+
+```python
 S = (S1 + S2) / 2
 ```
 
----
+## 🔬 Kết quả hiện tại
 
-### 📝 Submission Format
+Với mock data và 5 epochs training:
 
-```csv
-ID,L1,L2,...,L17,R1,R2,...,R17,Total,Left_gait_subtype,Right_gait_subtype
-track1-4,0,1,0,...,0,1,0,...,1,-1,-1,-1
-track1-5,1,0,1,...,1,0,1,...,0,-1,-1,-1
-...
-track2-4,-1,-1,...,-1,-1,-1,...,-1,-1,type2,type3
-track2-6,-1,-1,...,-1,-1,-1,...,-1,-1,WNL,WNL
-...
-```
+- **Track 1**: Accuracy ~50% (random baseline do mock data)
+- **Track 2**: Accuracy ~20% (random baseline cho 5 classes)
 
-**Note**: 
-- Track 1 rows: L1-L17 and R1-R17 are 0/1, Total=-1, gait_subtype=-1
-- Track 2 rows: All L/R columns=-1, Total=-1, gait_subtype is string
+⚠️ **Lưu ý**: Đây là kết quả demo với dữ liệu giả lập. Khi sử dụng keypoints thực tế và training đầy đủ, expected performance:
 
----
+- **Track 1**: Accuracy >70%, RMSE <4.0
+- **Track 2**: Accuracy >60%, Macro F1 >0.55
+- **Final Score**: ~0.65-0.70
 
-### 🔬 Technical Details
+## 📝 Checklist trước khi nộp
 
-#### Skeleton Graph (COCO 17 keypoints):
-```
-0: nose          8: right_elbow
-1: left_eye      9: left_wrist
-2: right_eye    10: right_wrist
-3: left_ear     11: left_hip
-4: right_ear    12: right_hip
-5: left_shoulder 13: left_knee
-6: right_shoulder 14: right_knee
-7: left_elbow   15: left_ankle
-                16: right_ankle
-```
+- [ ] Tải và tích hợp keypoints thực tế từ Google Drive
+- [ ] Training đầy đủ (50-100 epochs)
+- [ ] Validate với cross-validation (GroupKFold theo patient_id)
+- [ ] Tune hyperparameters (learning rate, batch size)
+- [ ] Ensemble nhiều models (optional)
+- [ ] Generate submission.csv cuối cùng
+- [ ] Viết technical report (4 trang, CVPR LaTeX template)
+- [ ] Public code repository trên GitHub
+- [ ] Kiểm tra format submission với sample của competition
 
-#### Adjacency Matrix:
-Natural bone connections + self-loops, normalized using D^(-1/2) * A * D^(-1/2)
+## 📚 Tài liệu tham khảo
 
----
+1. **EVGS Scoring Guide**: [Link](https://example.com/evgs-guide)
+2. **Gait Patterns in CP**: [Website](https://example.com/gait-patterns)
+3. **ST-GCN Paper**: Yan et al., "Spatial Temporal Graph Convolutional Networks for Skeleton-Based Action Recognition", AAAI 2018
+4. **COCO-WholeBody**: Jin et al., "Whole-Body Pose Estimation in the Wild", ECCV 2020
 
-### 📄 Requirements for Final Submission
+## 👥 Đóng góp
 
-1. **Technical Report**: 4-page paper using CVPR2026 LaTeX template
-2. **Code Repository**: Must be publicly available
-3. **Reproducibility**: Results must match local evaluation
+Giải pháp được phát triển bởi AI Assistant cho CVPR 2026 Children Gait Challenge.
+
+## 📄 License
+
+Code được cung cấp cho mục đích học thuật và research.
 
 ---
 
-### 👥 Team Information
-
-**Team Name**: [Your Team Name]  
-**Institution**: [Your Institution]  
-**Contact**: [Your Email]
-
----
-
-### 📚 References
-
-1. Yan, S., et al. "Spatial Temporal Graph Convolutional Networks for Skeleton-Based Action Recognition." AAAI 2018.
-2. Edinburgh Visual Gait Score: https://www.gaitscore.org/
-3. Cerebral Palsy Gait Patterns: https://orthoinfo.aaos.org/
-
----
-
-### ⚠️ Important Notes
-
-- Current implementation uses mock keypoints for demonstration
-- Replace with actual keypoint sequences from Kaggle dataset for final training
-- Ensure code is made public before competition deadline
-- Test locally with released test set before final submission
-
----
-
-**Good luck with the competition! 🎉**
+**Liên hệ**: Để biết thêm chi tiết về implementation hoặc collaboration.
